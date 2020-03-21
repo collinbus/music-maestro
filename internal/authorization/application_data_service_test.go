@@ -71,11 +71,11 @@ func (mock MockSuccessFileHandler) WriteAccessCodeFile(_ []byte) error {
 	return nil
 }
 
-func (mock MockSuccessFileHandler) WriteClientIdFile(bytes []byte) error {
+func (mock MockSuccessFileHandler) WriteClientIdFile(_ []byte) error {
 	return nil
 }
 
-func (mock MockSuccessFileHandler) WriteClientSecretFile(bytes []byte) error {
+func (mock MockSuccessFileHandler) WriteClientSecretFile(_ []byte) error {
 	return nil
 }
 
@@ -85,10 +85,10 @@ func (mock MockFailureFileHandler) WriteAccessCodeFile(_ []byte) error {
 	return errors.New("saving access code failed")
 }
 
-func (mock MockFailureFileHandler) WriteClientIdFile(bytes []byte) error {
+func (mock MockFailureFileHandler) WriteClientIdFile(_ []byte) error {
 	return errors.New("saving client id failed")
 }
 
-func (mock MockFailureFileHandler) WriteClientSecretFile(bytes []byte) error {
+func (mock MockFailureFileHandler) WriteClientSecretFile(_ []byte) error {
 	return errors.New("saving client secret failed")
 }
