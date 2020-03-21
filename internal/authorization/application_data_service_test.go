@@ -1,9 +1,12 @@
 package authorization
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestSuccessSavingAccessCodeWhenAbcIsPassed(t *testing.T) {
-	service := NewAccessCodeService(MockFileHandler{})
+	service := NewAccessCodeService(MockSuccessFileHandler{})
 
 	success := service.SaveAccessCode("abc")
 
@@ -12,8 +15,18 @@ func TestSuccessSavingAccessCodeWhenAbcIsPassed(t *testing.T) {
 	}
 }
 
+func TestFailureSavingAccessCodeWhenAbcIsPassed(t *testing.T) {
+	service := NewAccessCodeService(MockFailureFileHandler{})
+
+	success := service.SaveAccessCode("abc")
+
+	if success {
+		t.Error("Saving of the access code should fail.")
+	}
+}
+
 func TestSuccessSavingClientIdWhenAbcIsPassed(t *testing.T) {
-	service := NewAccessCodeService(MockFileHandler{})
+	service := NewAccessCodeService(MockSuccessFileHandler{})
 
 	success := service.SaveClientId("abc")
 
@@ -22,8 +35,18 @@ func TestSuccessSavingClientIdWhenAbcIsPassed(t *testing.T) {
 	}
 }
 
+func TestFailureSavingClientIdWhenAbcIsPassed(t *testing.T) {
+	service := NewAccessCodeService(MockFailureFileHandler{})
+
+	success := service.SaveAccessCode("abc")
+
+	if success {
+		t.Error("Saving of the access code should fail.")
+	}
+}
+
 func TestSuccessSavingClientSecretWhenAbcIsPassed(t *testing.T) {
-	service := NewAccessCodeService(MockFileHandler{})
+	service := NewAccessCodeService(MockSuccessFileHandler{})
 
 	success := service.SaveClientSecret("abc")
 
@@ -32,16 +55,40 @@ func TestSuccessSavingClientSecretWhenAbcIsPassed(t *testing.T) {
 	}
 }
 
-type MockFileHandler struct{}
+func TestFailureSavingClientSecretWhenAbcIsPassed(t *testing.T) {
+	service := NewAccessCodeService(MockFailureFileHandler{})
 
-func (mock MockFileHandler) WriteAccessCodeFile(_ []byte) error {
+	success := service.SaveAccessCode("abc")
+
+	if success {
+		t.Error("Saving of the access code should fail.")
+	}
+}
+
+type MockSuccessFileHandler struct{}
+
+func (mock MockSuccessFileHandler) WriteAccessCodeFile(_ []byte) error {
 	return nil
 }
 
-func (mock MockFileHandler) WriteClientIdFile(bytes []byte) error {
+func (mock MockSuccessFileHandler) WriteClientIdFile(bytes []byte) error {
 	return nil
 }
 
-func (mock MockFileHandler) WriteClientSecretFile(bytes []byte) error {
+func (mock MockSuccessFileHandler) WriteClientSecretFile(bytes []byte) error {
 	return nil
+}
+
+type MockFailureFileHandler struct{}
+
+func (mock MockFailureFileHandler) WriteAccessCodeFile(_ []byte) error {
+	return errors.New("saving access code failed")
+}
+
+func (mock MockFailureFileHandler) WriteClientIdFile(bytes []byte) error {
+	return errors.New("saving client id failed")
+}
+
+func (mock MockFailureFileHandler) WriteClientSecretFile(bytes []byte) error {
+	return errors.New("saving client secret failed")
 }
