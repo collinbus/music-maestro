@@ -4,7 +4,7 @@ import "testing"
 
 type MockFileHandler struct{}
 
-func TestFailureSavingAccessCodeWhenNilIsPassed(t *testing.T) {
+func TestFailureSavingAccessCodeWhenAbcIsPassed(t *testing.T) {
 	service := NewAccessCodeService(MockFileHandler{})
 
 	success := service.Save("abc")
