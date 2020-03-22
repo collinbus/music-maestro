@@ -21,3 +21,17 @@ func TestParseKeyValuesOfProvidedArguments(t *testing.T) {
 		t.Error("Arguments should contain [firstKey]={firstValue}")
 	}
 }
+
+func TestWithThreeArguments(t *testing.T) {
+	args := []string{"first", "second", "third"}
+
+	arguments, err := HandleArguments(args)
+
+	if err == nil {
+		t.Error("There should always be an even amount of arguments")
+	}
+
+	if arguments != nil {
+		t.Error("No arguments should be returned")
+	}
+}
