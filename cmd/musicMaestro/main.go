@@ -1,7 +1,14 @@
 package main
 
-func main() {
+import (
+	"os"
+)
 
+func main() {
+	_, err := HandleArguments(os.Args[1:])
+	if err != nil {
+		println(err.Error())
+	}
 }
 
 /*func handleArgument() {
