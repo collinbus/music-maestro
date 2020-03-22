@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"musicMaestro/internal/persistence"
+)
 
 func ParseArguments(args []string) (map[string]string, error) {
 	numberOfArguments := len(args)
@@ -14,4 +17,30 @@ func ParseArguments(args []string) (map[string]string, error) {
 	}
 
 	return arguments, nil
+}
+
+func HandleArguments(args map[string]string) {
+	applicationData := parseApplicationData(args)
+	persistence.SaveApplicationData(applicationData)
+}
+
+func parseApplicationData(args map[string]string) *persistence.ApplicationData {
+	accessCode := ""
+	clientId := ""
+	clientSecret := ""
+	if argumentsContains("-accessCode", args) {
+		accessCode = args["-accessCode"]
+	}
+	if argumentsContains("-clientId", args) {
+		clientId = args["-clientId"]
+	}
+	if argumentsContains("-clientSecret", args) {
+		clientSecret = args["-clientSecret"]
+	}
+	return persistence.NewApplicationData(accessCode, clientId, clientSecret)
+}
+
+func argumentsContains(key string, args map[string]string) bool {
+	_, hasValue := args[key]
+	return hasValue
 }

@@ -5,9 +5,13 @@ import (
 )
 
 func main() {
-	_, err := ParseArguments(os.Args[1:])
+	arguments, err := ParseArguments(os.Args[1:])
 	if err != nil {
 		println(err.Error())
+	}
+
+	if len(arguments) > 0 {
+		HandleArguments(arguments)
 	}
 }
 
