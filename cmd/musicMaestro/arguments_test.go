@@ -5,7 +5,7 @@ import "testing"
 func TestInvalidNumberOfArguments(t *testing.T) {
 	args := []string{"first"}
 
-	_, err := HandleArguments(args)
+	_, err := ParseArguments(args)
 
 	if err == nil {
 		t.Error("There should always be an even amount of arguments")
@@ -15,7 +15,7 @@ func TestInvalidNumberOfArguments(t *testing.T) {
 func TestParseKeyValuesOfProvidedArguments(t *testing.T) {
 	args := []string{"firstKey", "firstValue"}
 
-	arguments, _ := HandleArguments(args)
+	arguments, _ := ParseArguments(args)
 
 	if arguments["firstKey"] != "firstValue" {
 		t.Error("Arguments should contain [firstKey]={firstValue}")
@@ -25,7 +25,7 @@ func TestParseKeyValuesOfProvidedArguments(t *testing.T) {
 func TestWithThreeArguments(t *testing.T) {
 	args := []string{"first", "second", "third"}
 
-	arguments, err := HandleArguments(args)
+	arguments, err := ParseArguments(args)
 
 	if err == nil {
 		t.Error("There should always be an even amount of arguments")

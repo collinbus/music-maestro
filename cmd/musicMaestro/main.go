@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	_, err := HandleArguments(os.Args[1:])
+	_, err := ParseArguments(os.Args[1:])
 	if err != nil {
 		println(err.Error())
 	}

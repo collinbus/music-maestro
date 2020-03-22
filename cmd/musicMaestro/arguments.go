@@ -2,7 +2,7 @@ package main
 
 import "errors"
 
-func HandleArguments(args []string) (map[string]string, error) {
+func ParseArguments(args []string) (map[string]string, error) {
 	numberOfArguments := len(args)
 	arguments := make(map[string]string)
 	if numberOfArguments%2 != 0 {
