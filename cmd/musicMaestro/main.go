@@ -21,6 +21,10 @@ func main() {
 
 func startMusicMaestro() {
 	applicationData := persistence.RetrieveApplicationData()
-	applicationData = network.RequestApiToken(applicationData)
-	persistence.SaveApplicationData(applicationData)
+
+	if applicationData.RefreshToken == "" {
+		applicationData = network.RequestApiToken(applicationData)
+		persistence.SaveApplicationData(applicationData)
+		println("Updated Api Token")
+	}
 }

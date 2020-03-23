@@ -27,6 +27,7 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 
 	tokenResponse := parseApiTokenResponse(response)
 
+	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.RefreshToken = tokenResponse.RefreshToken
 	applicationData.TokenExpiration = calculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
