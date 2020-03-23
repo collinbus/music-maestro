@@ -1,5 +1,10 @@
 # Authorization
 
+### Requirements
+
+You need a MongoDB server thats running on `localhost:27017`<br>
+Inside you'll need a database `musicMaestro` with collection `applicationData`. That collection must contain one document with `applicationName: musicMaestro`
+
 ### Spotify Authorization
 
 If your application wants to use the Spotify api you can follow the [Spotify Authorization Code Flow](https://developer.spotify.com/documentation/general/guides/authorization-guide/#authorization-code-flow)<br>
