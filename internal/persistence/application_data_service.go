@@ -23,13 +23,34 @@ func SaveApplicationData(applicationData *ApplicationData) bool {
 	return true
 }
 
+func RetrieveApplicationData() *ApplicationData {
+	ctx, _ := CreateContext()
+	client := EstablishConnection(ctx)
+	appDataCollection := getApplicationDataCollection(client)
+
+	filter := bson.D{{"applicationName", "musicMaestro"}}
+
+	result := appDataCollection.FindOne(ctx, filter)
+
+	applicationData := NewApplicationData("", "", "")
+	err := result.Decode(applicationData)
+
+	if err != nil {
+		println(fmt.Errorf(err.Error()))
+	}
+
+	return applicationData
+}
+
 func createAppDataBSON(applicationData *ApplicationData) bson.D {
 	return bson.D{
 		{"$set", bson.M{
 			"applicationName": "musicMaestro",
-			"accessCode":      applicationData.accessCode,
-			"clientId":        applicationData.clientId,
-			"clientSecret":    applicationData.clientSecret,
+			"accessCode":      applicationData.AccessCode,
+			"clientId":        applicationData.ClientId,
+			"clientSecret":    applicationData.ClientSecret,
+			"refreshToken":    applicationData.RefreshToken,
+			"tokenExpiration": applicationData.TokenExpiration,
 		}},
 	}
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"musicMaestro/internal/network"
+	"musicMaestro/internal/persistence"
 	"os"
 )
 
@@ -13,16 +15,12 @@ func main() {
 	if len(arguments) > 0 {
 		HandleArguments(arguments)
 	}
+
+	startMusicMaestro()
 }
 
-/*func handleArgument() {
-	if os.Args[1] == "-code" {
-		saveAccessCode(os.Args[2])
-	}
-	if os.Args[1] == "-clientId" {
-		saveClientId(os.Args[2])
-	}
-	if os.Args[1] == "-clientSecret" {
-		saveClientSecret(os.Args[2])
-	}
-}*/
+func startMusicMaestro() {
+	applicationData := persistence.RetrieveApplicationData()
+	applicationData = network.RequestApiToken(applicationData)
+	persistence.SaveApplicationData(applicationData)
+}
