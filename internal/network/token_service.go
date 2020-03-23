@@ -18,8 +18,7 @@ const contentType = "application/x-www-form-urlencoded"
 func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createApiRequestBody(applicationData)
 	request, _ := http.NewRequest(http.MethodPost, url, requestBody)
-	request.Header.Add("Content-Type", contentType)
-	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
+	addRequestHeaders(request)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		log.Fatal(err)
@@ -31,6 +30,36 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 	applicationData.RefreshToken = tokenResponse.RefreshToken
 	applicationData.TokenExpiration = calculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
+}
+
+func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+	requestBody := createRefreshRequestBody(applicationData)
+	request, _ := http.NewRequest(http.MethodPost, url, requestBody)
+
+	addRequestHeaders(request)
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tokenResponse := parseRefreshTokenResponse(response)
+
+	applicationData.AccessCode = tokenResponse.AccessToken
+	applicationData.TokenExpiration = calculateExpirationDate(tokenResponse.ExpiresIn)
+	return applicationData
+}
+
+func createRefreshRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
+	refreshToken := applicationData.RefreshToken
+	clientId := applicationData.ClientId
+	clientSecret := applicationData.ClientSecret
+
+	return NewRefreshTokenRequestBody(refreshToken, clientId, clientSecret)
+}
+
+func addRequestHeaders(request *http.Request) {
+	request.Header.Add("Content-Type", contentType)
+	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
 }
 
 func createApiRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
@@ -50,6 +79,25 @@ func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
 func parseApiTokenJsonResponse(data []byte, statusCode int) *ApiTokenResponseBody {
 	if statusCode == 200 {
 		responseBody := NewApiTokenResponseBody()
+		decodeJson(data, responseBody)
+		return responseBody
+	} else {
+		errorResponseBody := NewErrorResponseBody()
+		decodeJson(data, errorResponseBody)
+		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
+		return nil
+	}
+}
+
+func parseRefreshTokenResponse(response *http.Response) *RefreshTokenResponseBody {
+	all := decompressResponse(response)
+	responseBody := parseRefreshTokenJsonResponse(all, response.StatusCode)
+	return responseBody
+}
+
+func parseRefreshTokenJsonResponse(data []byte, statusCode int) *RefreshTokenResponseBody {
+	if statusCode == 200 {
+		responseBody := NewRefreshTokenResponseBody()
 		decodeJson(data, responseBody)
 		return responseBody
 	} else {
