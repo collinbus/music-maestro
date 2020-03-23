@@ -11,3 +11,12 @@ type ApiTokenResponseBody struct {
 func NewApiTokenResponseBody() *ApiTokenResponseBody {
 	return &ApiTokenResponseBody{}
 }
+
+type ErrorResponseBody struct {
+	Error       string `json:"error"`
+	Description string `json:"error_description"`
+}
+
+func NewErrorResponseBody() *ErrorResponseBody {
+	return &ErrorResponseBody{}
+}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"musicMaestro/internal/persistence"
@@ -42,19 +41,32 @@ func createApiRequestBody(applicationData *persistence.ApplicationData) *strings
 }
 
 func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
-	responseBody := NewApiTokenResponseBody()
-	all, err := decompressResponse(response)
-	println(string(all))
-	err = json.NewDecoder(bytes.NewReader(all)).Decode(responseBody)
-
-	if err != nil {
-		println(fmt.Errorf(err.Error()))
-		return nil
-	}
+	all := decompressResponse(response)
+	responseBody := parseApiTokenJsonResponse(all, response.StatusCode)
 	return responseBody
 }
 
-func decompressResponse(response *http.Response) ([]byte, error) {
+func parseApiTokenJsonResponse(data []byte, statusCode int) *ApiTokenResponseBody {
+	if statusCode == 200 {
+		responseBody := NewApiTokenResponseBody()
+		decodeJson(data, responseBody)
+		return responseBody
+	} else {
+		errorResponseBody := NewErrorResponseBody()
+		decodeJson(data, errorResponseBody)
+		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
+		return nil
+	}
+}
+
+func decodeJson(data []byte, responseBody interface{}) {
+	err := json.NewDecoder(bytes.NewReader(data)).Decode(responseBody)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func decompressResponse(response *http.Response) []byte {
 	defer response.Body.Close()
 	reader, err := gzip.NewReader(response.Body)
 
@@ -62,7 +74,8 @@ func decompressResponse(response *http.Response) ([]byte, error) {
 		log.Fatal(err)
 	}
 
-	return ioutil.ReadAll(reader)
+	responseBytes, _ := ioutil.ReadAll(reader)
+	return responseBytes
 }
 
 func calculateExpirationDate(expiresIn int) string {
