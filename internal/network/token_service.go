@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"musicMaestro/internal/persistence"
 	"net/http"
 	"strings"
@@ -22,8 +23,7 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		println(fmt.Errorf(err.Error()))
-		return applicationData
+		log.Fatal(err)
 	}
 
 	tokenResponse := parseApiTokenResponse(response)
@@ -59,7 +59,7 @@ func decompressResponse(response *http.Response) ([]byte, error) {
 	reader, err := gzip.NewReader(response.Body)
 
 	if err != nil {
-		println(err.Error())
+		log.Fatal(err)
 	}
 
 	return ioutil.ReadAll(reader)
