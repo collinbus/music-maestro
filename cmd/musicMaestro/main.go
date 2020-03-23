@@ -27,4 +27,6 @@ func startMusicMaestro() {
 		persistence.SaveApplicationData(applicationData)
 		println("Updated Api Token")
 	}
+
+	//TODO application menu
 }
