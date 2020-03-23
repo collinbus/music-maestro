@@ -43,9 +43,7 @@ func createApiRequestBody(applicationData *persistence.ApplicationData) *strings
 
 func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
 	responseBody := NewApiTokenResponseBody()
-	reader, err := gzip.NewReader(response.Body)
-	defer response.Body.Close()
-	all, err := ioutil.ReadAll(reader)
+	all, err := decompressResponse(response)
 	println(string(all))
 	err = json.NewDecoder(bytes.NewReader(all)).Decode(responseBody)
 
@@ -56,9 +54,19 @@ func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
 	return responseBody
 }
 
+func decompressResponse(response *http.Response) ([]byte, error) {
+	defer response.Body.Close()
+	reader, err := gzip.NewReader(response.Body)
+
+	if err != nil {
+		println(err.Error())
+	}
+
+	return ioutil.ReadAll(reader)
+}
+
 func calculateExpirationDate(expiresIn int) string {
 	now := time.Now()
 	expirationDuration := time.Duration(expiresIn) * time.Second
-	now.Add(expirationDuration)
-	return now.String()
+	return now.Add(expirationDuration).String()
 }
