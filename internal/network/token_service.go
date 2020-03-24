@@ -5,7 +5,6 @@ import (
 	"musicMaestro/internal/persistence"
 	"net/http"
 	"strings"
-	"time"
 )
 
 const url = "https://accounts.spotify.com/api/token"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"musicMaestro/internal/network"
-	"musicMaestro/internal/persistence"
+	"bufio"
+	"fmt"
 	"os"
 )
 
@@ -20,13 +20,49 @@ func main() {
 }
 
 func startMusicMaestro() {
-	applicationData := persistence.RetrieveApplicationData()
-
-	if applicationData.RefreshToken == "" {
-		applicationData = network.RequestApiToken(applicationData)
-		persistence.SaveApplicationData(applicationData)
-		println("Updated Api Token")
+	for {
+		printMenu()
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		handleChoice(scanner.Text())
 	}
+}
 
-	//TODO application menu
+func printMenu() {
+	println("==========================")
+	println(" Welcome to Music Maestro ")
+	println("==========================")
+
+	println("What would you like to do?")
+	println("1) Update user")
+	println("2) Update music library")
+	println("0) Exit")
+}
+
+func handleChoice(choice string) {
+	switch choice {
+	case "0":
+		exit()
+	case "1":
+		updateUser()
+	case "2":
+		updateMusicLibrary()
+	default:
+		fmt.Println("Invalid choice")
+	}
+}
+
+func exit() {
+	println("Quitting Music Maestro")
+	os.Exit(0)
+}
+
+func updateUser() {
+	println("Update User")
+	// TODO update user
+}
+
+func updateMusicLibrary() {
+	println("Update Music Library")
+	// TODO update music library
 }
