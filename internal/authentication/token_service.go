@@ -1,7 +1,8 @@
-package network
+package authentication
 
 import (
 	"log"
+	"musicMaestro/internal/network"
 	"musicMaestro/internal/persistence"
 	"net/http"
 	"strings"
@@ -23,7 +24,7 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.RefreshToken = tokenResponse.RefreshToken
-	applicationData.TokenExpiration = CalculateExpirationDate(tokenResponse.ExpiresIn)
+	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
 }
 
@@ -40,7 +41,7 @@ func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.
 	tokenResponse := parseRefreshTokenResponse(response)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
-	applicationData.TokenExpiration = CalculateExpirationDate(tokenResponse.ExpiresIn)
+	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
 }
 
@@ -53,7 +54,7 @@ func createApiRequestBody(applicationData *persistence.ApplicationData) *strings
 }
 
 func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
-	all := DecompressResponse(response)
+	all := network.DecompressResponse(response)
 	responseBody := parseApiTokenJsonResponse(all, response.StatusCode)
 	return responseBody
 }
@@ -61,11 +62,11 @@ func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
 func parseApiTokenJsonResponse(data []byte, statusCode int) *ApiTokenResponseBody {
 	if statusCode == 200 {
 		responseBody := NewApiTokenResponseBody()
-		DecodeJson(data, responseBody)
+		network.DecodeJson(data, responseBody)
 		return responseBody
 	} else {
 		errorResponseBody := NewErrorResponseBody()
-		DecodeJson(data, errorResponseBody)
+		network.DecodeJson(data, errorResponseBody)
 		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
 		return nil
 	}
@@ -80,7 +81,7 @@ func createRefreshRequestBody(applicationData *persistence.ApplicationData) *str
 }
 
 func parseRefreshTokenResponse(response *http.Response) *RefreshTokenResponseBody {
-	all := DecompressResponse(response)
+	all := network.DecompressResponse(response)
 	responseBody := parseRefreshTokenJsonResponse(all, response.StatusCode)
 	return responseBody
 }
@@ -88,11 +89,11 @@ func parseRefreshTokenResponse(response *http.Response) *RefreshTokenResponseBod
 func parseRefreshTokenJsonResponse(data []byte, statusCode int) *RefreshTokenResponseBody {
 	if statusCode == 200 {
 		responseBody := NewRefreshTokenResponseBody()
-		DecodeJson(data, responseBody)
+		network.DecodeJson(data, responseBody)
 		return responseBody
 	} else {
 		errorResponseBody := NewErrorResponseBody()
-		DecodeJson(data, errorResponseBody)
+		network.DecodeJson(data, errorResponseBody)
 		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
 		return nil
 	}

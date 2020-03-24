@@ -1,4 +1,4 @@
-package network
+package authentication
 
 type ApiTokenResponseBody struct {
 	AccessToken  string `json:"access_token"`
