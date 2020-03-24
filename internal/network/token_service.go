@@ -103,9 +103,3 @@ func addRequestHeaders(request *http.Request) {
 	request.Header.Add("Content-Type", contentType)
 	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
 }
-
-func CalculateExpirationDate(expiresIn int) string {
-	now := time.Now()
-	expirationDuration := time.Duration(expiresIn) * time.Second
-	return now.Add(expirationDuration).String()
-}
