@@ -49,19 +49,6 @@ func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.
 	return applicationData
 }
 
-func createRefreshRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
-	refreshToken := applicationData.RefreshToken
-	clientId := applicationData.ClientId
-	clientSecret := applicationData.ClientSecret
-
-	return NewRefreshTokenRequestBody(refreshToken, clientId, clientSecret)
-}
-
-func addRequestHeaders(request *http.Request) {
-	request.Header.Add("Content-Type", contentType)
-	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
-}
-
 func createApiRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
 	code := applicationData.AccessCode
 	id := applicationData.ClientId
@@ -89,6 +76,14 @@ func parseApiTokenJsonResponse(data []byte, statusCode int) *ApiTokenResponseBod
 	}
 }
 
+func createRefreshRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
+	refreshToken := applicationData.RefreshToken
+	clientId := applicationData.ClientId
+	clientSecret := applicationData.ClientSecret
+
+	return NewRefreshTokenRequestBody(refreshToken, clientId, clientSecret)
+}
+
 func parseRefreshTokenResponse(response *http.Response) *RefreshTokenResponseBody {
 	all := decompressResponse(response)
 	responseBody := parseRefreshTokenJsonResponse(all, response.StatusCode)
@@ -106,6 +101,11 @@ func parseRefreshTokenJsonResponse(data []byte, statusCode int) *RefreshTokenRes
 		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
 		return nil
 	}
+}
+
+func addRequestHeaders(request *http.Request) {
+	request.Header.Add("Content-Type", contentType)
+	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
 }
 
 func decodeJson(data []byte, responseBody interface{}) {
