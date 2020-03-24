@@ -2,19 +2,29 @@ package network
 
 import (
 	"compress/gzip"
+	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 )
 
-func DecompressResponse(response *http.Response) []byte {
-	defer response.Body.Close()
-	reader, err := gzip.NewReader(response.Body)
+func DecompressResponse(response io.ReadCloser) []byte {
+	defer response.Close()
+	reader, err := gzip.NewReader(response)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	responseBytes, _ := ioutil.ReadAll(reader)
+	responseBytes := getBytesFrom(reader)
 	return responseBytes
+}
+
+func getBytesFrom(reader *gzip.Reader) []byte {
+	all, err := ioutil.ReadAll(reader)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return all
 }

@@ -4,23 +4,20 @@ import (
 	"log"
 	"musicMaestro/internal/network"
 	"musicMaestro/internal/persistence"
-	"net/http"
 	"strings"
 )
 
 const url = "https://accounts.spotify.com/api/token"
-const contentType = "application/x-www-form-urlencoded"
 
 func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createApiRequestBody(applicationData)
-	request, _ := http.NewRequest(http.MethodPost, url, requestBody)
-	addRequestHeaders(request)
-	response, err := http.DefaultClient.Do(request)
+	success, err := network.Post(url, requestBody, NewApiTokenResponseMapper())
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tokenResponse := parseApiTokenResponse(response)
+	tokenResponse := success.(ApiTokenResponseBody)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.RefreshToken = tokenResponse.RefreshToken
@@ -30,15 +27,13 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 
 func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createRefreshRequestBody(applicationData)
-	request, _ := http.NewRequest(http.MethodPost, url, requestBody)
+	success, err := network.Post(url, requestBody, NewRefreshTokenResponseMapper())
 
-	addRequestHeaders(request)
-	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tokenResponse := parseRefreshTokenResponse(response)
+	tokenResponse := success.(RefreshTokenResponseBody)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
@@ -53,53 +48,10 @@ func createApiRequestBody(applicationData *persistence.ApplicationData) *strings
 	return NewApiTokenRequestBody(code, id, secret)
 }
 
-func parseApiTokenResponse(response *http.Response) *ApiTokenResponseBody {
-	all := network.DecompressResponse(response)
-	responseBody := parseApiTokenJsonResponse(all, response.StatusCode)
-	return responseBody
-}
-
-func parseApiTokenJsonResponse(data []byte, statusCode int) *ApiTokenResponseBody {
-	if statusCode == 200 {
-		responseBody := NewApiTokenResponseBody()
-		network.DecodeJson(data, responseBody)
-		return responseBody
-	} else {
-		errorResponseBody := NewErrorResponseBody()
-		network.DecodeJson(data, errorResponseBody)
-		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
-		return nil
-	}
-}
-
 func createRefreshRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
 	refreshToken := applicationData.RefreshToken
 	clientId := applicationData.ClientId
 	clientSecret := applicationData.ClientSecret
 
 	return NewRefreshTokenRequestBody(refreshToken, clientId, clientSecret)
-}
-
-func parseRefreshTokenResponse(response *http.Response) *RefreshTokenResponseBody {
-	all := network.DecompressResponse(response)
-	responseBody := parseRefreshTokenJsonResponse(all, response.StatusCode)
-	return responseBody
-}
-
-func parseRefreshTokenJsonResponse(data []byte, statusCode int) *RefreshTokenResponseBody {
-	if statusCode == 200 {
-		responseBody := NewRefreshTokenResponseBody()
-		network.DecodeJson(data, responseBody)
-		return responseBody
-	} else {
-		errorResponseBody := NewErrorResponseBody()
-		network.DecodeJson(data, errorResponseBody)
-		log.Fatalf("%s: %s", errorResponseBody.Error, errorResponseBody.Description)
-		return nil
-	}
-}
-
-func addRequestHeaders(request *http.Request) {
-	request.Header.Add("Content-Type", contentType)
-	request.Header.Add("Accept-Encoding", "gzip, deflate, br")
 }
