@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"musicMaestro/internal/domain"
 )
 
@@ -17,7 +18,8 @@ func (*ApplicationDataService) SaveApplicationData(applicationData *domain.Appli
 	filter := bson.D{{"applicationName", "musicMaestro"}}
 	updateBSON := createAppDataBSON(applicationData)
 
-	_, err := appDataCollection.UpdateOne(ctx, filter, updateBSON)
+	updateOptions := options.Update().SetUpsert(true)
+	_, err := appDataCollection.UpdateOne(ctx, filter, updateBSON, updateOptions)
 	if err != nil {
 		println(fmt.Errorf(err.Error()))
 		return false
