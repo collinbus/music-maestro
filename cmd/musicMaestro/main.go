@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"musicMaestro/internal/persistence"
 	"musicMaestro/internal/token"
 	"musicMaestro/internal/user"
 	"os"
@@ -61,9 +60,8 @@ func exit() {
 }
 
 func updateUser() {
-	appDataService := persistence.NewApplicationDataService()
 	tokenService := token.NewService()
-	userService := user.NewService(appDataService, tokenService)
+	userService := user.NewService(tokenService)
 
 	userService.UpdateCurrentUser()
 }

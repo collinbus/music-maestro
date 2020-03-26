@@ -10,9 +10,23 @@ import (
 
 const url = "https://accounts.spotify.com/api/token"
 
-type Service struct{}
+type Service struct {
+	appDataService persistence.ApplicationDataService
+}
 
-func (*Service) RequestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+func (service *Service) GetAuthorizationToken() string {
+	appData := service.appDataService.RetrieveApplicationData()
+	if appData.RefreshToken == "" {
+		appData = requestApiToken(appData)
+		service.appDataService.SaveApplicationData(appData)
+	} else if isTokenExpired(appData.TokenExpiration) {
+		appData = refreshApiToken(appData)
+		service.appDataService.SaveApplicationData(appData)
+	}
+	return appData.AccessCode
+}
+
+func requestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createApiRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewApiTokenResponseMapper())
 
@@ -28,7 +42,7 @@ func (*Service) RequestApiToken(applicationData *persistence.ApplicationData) *p
 	return applicationData
 }
 
-func (*Service) RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+func refreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createRefreshRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewRefreshTokenResponseMapper())
 
@@ -43,7 +57,7 @@ func (*Service) RefreshApiToken(applicationData *persistence.ApplicationData) *p
 	return applicationData
 }
 
-func (*Service) IsTokenExpired(expiration string) bool {
+func isTokenExpired(expiration string) bool {
 	parsedExpirationTime, err := time.Parse("2006-01-02T15:04:05-0700", expiration)
 	if err != nil {
 		log.Fatal(err)
