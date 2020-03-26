@@ -17,15 +17,11 @@ func (service Service) UpdateCurrentUser() {
 	authorizationToken := service.tokenService.GetAuthorizationToken()
 	requestBody := strings.NewReader("")
 	mapper := NewResponseMapper()
-	response, err := network.Get(url, requestBody, mapper, authorizationToken)
+	_, err := network.Get(url, requestBody, mapper, authorizationToken)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	usr := response.(*User)
-	println(usr.Id)
-	println(usr.Name)
 }
 
 func NewService(tokenService *token.Service) *Service {
