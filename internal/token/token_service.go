@@ -5,11 +5,14 @@ import (
 	"musicMaestro/internal/network"
 	"musicMaestro/internal/persistence"
 	"strings"
+	"time"
 )
 
 const url = "https://accounts.spotify.com/api/token"
 
-func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+type Service struct{}
+
+func (*Service) RequestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createApiRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewApiTokenResponseMapper())
 
@@ -17,7 +20,7 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 		log.Fatal(err)
 	}
 
-	tokenResponse := success.(ApiTokenResponseBody)
+	tokenResponse := success.(*ApiTokenResponseBody)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.RefreshToken = tokenResponse.RefreshToken
@@ -25,7 +28,7 @@ func RequestApiToken(applicationData *persistence.ApplicationData) *persistence.
 	return applicationData
 }
 
-func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+func (*Service) RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
 	requestBody := createRefreshRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewRefreshTokenResponseMapper())
 
@@ -33,11 +36,19 @@ func RefreshApiToken(applicationData *persistence.ApplicationData) *persistence.
 		log.Fatal(err)
 	}
 
-	tokenResponse := success.(RefreshTokenResponseBody)
+	tokenResponse := success.(*RefreshTokenResponseBody)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
+}
+
+func (*Service) IsTokenExpired(expiration string) bool {
+	parsedExpirationTime, err := time.Parse("2006-01-02T15:04:05-0700", expiration)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return parsedExpirationTime.Before(time.Now())
 }
 
 func createApiRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
@@ -54,4 +65,8 @@ func createRefreshRequestBody(applicationData *persistence.ApplicationData) *str
 	clientSecret := applicationData.ClientSecret
 
 	return NewRefreshTokenRequestBody(refreshToken, clientId, clientSecret)
+}
+
+func NewService() *Service {
+	return &Service{}
 }

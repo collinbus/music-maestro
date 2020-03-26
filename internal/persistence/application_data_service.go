@@ -6,7 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func SaveApplicationData(applicationData *ApplicationData) bool {
+type ApplicationDataService struct{}
+
+func (*ApplicationDataService) SaveApplicationData(applicationData *ApplicationData) bool {
 	ctx, _ := CreateContext()
 	client := EstablishConnection(ctx)
 	appDataCollection := getApplicationDataCollection(client)
@@ -23,7 +25,7 @@ func SaveApplicationData(applicationData *ApplicationData) bool {
 	return true
 }
 
-func RetrieveApplicationData() *ApplicationData {
+func (*ApplicationDataService) RetrieveApplicationData() *ApplicationData {
 	ctx, _ := CreateContext()
 	client := EstablishConnection(ctx)
 	appDataCollection := getApplicationDataCollection(client)
@@ -57,4 +59,8 @@ func createAppDataBSON(applicationData *ApplicationData) bson.D {
 
 func getApplicationDataCollection(client *mongo.Client) *mongo.Collection {
 	return GetCollection("applicationData", client)
+}
+
+func NewApplicationDataService() *ApplicationDataService {
+	return &ApplicationDataService{}
 }

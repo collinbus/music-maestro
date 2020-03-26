@@ -21,7 +21,8 @@ func ParseArguments(args []string) (map[string]string, error) {
 
 func HandleArguments(args map[string]string) {
 	applicationData := parseApplicationData(args)
-	persistence.SaveApplicationData(applicationData)
+	appDataService := persistence.NewApplicationDataService()
+	appDataService.SaveApplicationData(applicationData)
 }
 
 func parseApplicationData(args map[string]string) *persistence.ApplicationData {
