@@ -29,6 +29,10 @@ func (service Service) UpdateCurrentUser() {
 	persistence.SaveUser(usr)
 }
 
+func (Service) FetchUser() *domain.User {
+	return persistence.GetUser()
+}
+
 func NewService(tokenService *token.Service) *Service {
 	return &Service{tokenService: tokenService}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"musicMaestro/internal/image"
 	"musicMaestro/internal/token"
 	"musicMaestro/internal/user"
 	"os"
@@ -38,6 +39,7 @@ func printMenu() {
 	println("What would you like to do?")
 	println("1) Update user")
 	println("2) Update music library")
+	println("3) Download images")
 	println("0) Exit")
 }
 
@@ -49,6 +51,8 @@ func handleChoice(choice string) {
 		updateUser()
 	case "2":
 		updateMusicLibrary()
+	case "3":
+		downloadImages()
 	default:
 		fmt.Println("Invalid choice")
 	}
@@ -69,4 +73,12 @@ func updateUser() {
 func updateMusicLibrary() {
 	println("Update Music Library")
 	// TODO update music library
+}
+
+func downloadImages() {
+	tokenService := token.NewService()
+	userService := user.NewService(tokenService)
+	imageService := image.NewService(userService)
+
+	imageService.DownloadUserImage()
 }

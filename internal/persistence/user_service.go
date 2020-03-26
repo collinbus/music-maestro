@@ -8,6 +8,16 @@ import (
 	"musicMaestro/internal/domain"
 )
 
+type UserBSON struct {
+	UserId      string
+	Name        string
+	ImageUrl    string
+	Followers   int
+	InternalUrl string
+	ExternalUrl string
+	Uri         string
+}
+
 func SaveUser(user *domain.User) bool {
 	ctx, _ := CreateContext()
 	client := EstablishConnection(ctx)
@@ -24,6 +34,29 @@ func SaveUser(user *domain.User) bool {
 		return false
 	}
 	return true
+}
+
+func GetUser() *domain.User {
+	ctx, _ := CreateContext()
+	client := EstablishConnection(ctx)
+	collection := getUserCollection(client)
+
+	result := collection.FindOne(ctx, bson.D{})
+
+	userBSON := createEmptyUserBSON()
+	err := result.Decode(userBSON)
+
+	if err != nil {
+		println(fmt.Errorf(err.Error()))
+	}
+
+	urls := domain.NewUrls(userBSON.InternalUrl, userBSON.ExternalUrl, userBSON.Uri)
+	usr := domain.NewUser(userBSON.UserId, userBSON.Name, urls, userBSON.ImageUrl, userBSON.Followers)
+	return usr
+}
+
+func createEmptyUserBSON() *UserBSON {
+	return &UserBSON{}
 }
 
 func createUserBSON(usr *domain.User) bson.D {
