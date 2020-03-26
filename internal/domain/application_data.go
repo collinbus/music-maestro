@@ -1,4 +1,4 @@
-package persistence
+package domain
 
 type ApplicationData struct {
 	AccessCode      string

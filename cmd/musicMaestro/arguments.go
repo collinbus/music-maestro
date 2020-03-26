@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"musicMaestro/internal/domain"
 	"musicMaestro/internal/persistence"
 )
 
@@ -25,7 +26,7 @@ func HandleArguments(args map[string]string) {
 	appDataService.SaveApplicationData(applicationData)
 }
 
-func parseApplicationData(args map[string]string) *persistence.ApplicationData {
+func parseApplicationData(args map[string]string) *domain.ApplicationData {
 	accessCode := ""
 	clientId := ""
 	clientSecret := ""
@@ -38,7 +39,7 @@ func parseApplicationData(args map[string]string) *persistence.ApplicationData {
 	if argumentsContains("-clientSecret", args) {
 		clientSecret = args["-clientSecret"]
 	}
-	return persistence.NewApplicationData(accessCode, clientId, clientSecret)
+	return domain.NewApplicationData(accessCode, clientId, clientSecret)
 }
 
 func argumentsContains(key string, args map[string]string) bool {

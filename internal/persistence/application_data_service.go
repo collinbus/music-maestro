@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"musicMaestro/internal/domain"
 )
 
 type ApplicationDataService struct{}
 
-func (*ApplicationDataService) SaveApplicationData(applicationData *ApplicationData) bool {
+func (*ApplicationDataService) SaveApplicationData(applicationData *domain.ApplicationData) bool {
 	ctx, _ := CreateContext()
 	client := EstablishConnection(ctx)
 	appDataCollection := getApplicationDataCollection(client)
@@ -25,7 +26,7 @@ func (*ApplicationDataService) SaveApplicationData(applicationData *ApplicationD
 	return true
 }
 
-func (*ApplicationDataService) RetrieveApplicationData() *ApplicationData {
+func (*ApplicationDataService) RetrieveApplicationData() *domain.ApplicationData {
 	ctx, _ := CreateContext()
 	client := EstablishConnection(ctx)
 	appDataCollection := getApplicationDataCollection(client)
@@ -34,7 +35,7 @@ func (*ApplicationDataService) RetrieveApplicationData() *ApplicationData {
 
 	result := appDataCollection.FindOne(ctx, filter)
 
-	applicationData := NewApplicationData("", "", "")
+	applicationData := domain.NewApplicationData("", "", "")
 	err := result.Decode(applicationData)
 
 	if err != nil {
@@ -44,7 +45,7 @@ func (*ApplicationDataService) RetrieveApplicationData() *ApplicationData {
 	return applicationData
 }
 
-func createAppDataBSON(applicationData *ApplicationData) bson.D {
+func createAppDataBSON(applicationData *domain.ApplicationData) bson.D {
 	return bson.D{
 		{"$set", bson.M{
 			"applicationName": "musicMaestro",

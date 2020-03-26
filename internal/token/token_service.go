@@ -2,6 +2,7 @@ package token
 
 import (
 	"log"
+	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
 	"musicMaestro/internal/persistence"
 	"strings"
@@ -26,7 +27,7 @@ func (service *Service) GetAuthorizationToken() string {
 	return appData.AccessCode
 }
 
-func requestApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+func requestApiToken(applicationData *domain.ApplicationData) *domain.ApplicationData {
 	requestBody := createApiRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewApiTokenResponseMapper())
 
@@ -42,7 +43,7 @@ func requestApiToken(applicationData *persistence.ApplicationData) *persistence.
 	return applicationData
 }
 
-func refreshApiToken(applicationData *persistence.ApplicationData) *persistence.ApplicationData {
+func refreshApiToken(applicationData *domain.ApplicationData) *domain.ApplicationData {
 	requestBody := createRefreshRequestBody(applicationData)
 	success, err := network.Post(url, requestBody, NewRefreshTokenResponseMapper())
 
@@ -65,7 +66,7 @@ func isTokenExpired(expiration string) bool {
 	return parsedExpirationTime.Before(time.Now())
 }
 
-func createApiRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
+func createApiRequestBody(applicationData *domain.ApplicationData) *strings.Reader {
 	code := applicationData.AccessCode
 	id := applicationData.ClientId
 	secret := applicationData.ClientSecret
@@ -73,7 +74,7 @@ func createApiRequestBody(applicationData *persistence.ApplicationData) *strings
 	return NewApiTokenRequestBody(code, id, secret)
 }
 
-func createRefreshRequestBody(applicationData *persistence.ApplicationData) *strings.Reader {
+func createRefreshRequestBody(applicationData *domain.ApplicationData) *strings.Reader {
 	refreshToken := applicationData.RefreshToken
 	clientId := applicationData.ClientId
 	clientSecret := applicationData.ClientSecret

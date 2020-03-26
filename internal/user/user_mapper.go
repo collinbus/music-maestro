@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
 	"musicMaestro/internal/token"
 )
@@ -36,9 +37,9 @@ func createUser(responseBody *GetUserInfoResponse) interface{} {
 	apiUrl := responseBody.Link
 	uri := responseBody.Uri
 
-	urls := NewUrls(apiUrl, userUrl, uri)
+	urls := domain.NewUrls(apiUrl, userUrl, uri)
 
-	return NewUser(id, name, urls, imageUrl, followers)
+	return domain.NewUser(id, name, urls, imageUrl, followers)
 }
 
 func NewResponseMapper() *ResponseMapper {

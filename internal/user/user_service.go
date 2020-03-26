@@ -2,7 +2,9 @@ package user
 
 import (
 	"log"
+	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
+	"musicMaestro/internal/persistence"
 	"musicMaestro/internal/token"
 	"strings"
 )
@@ -17,11 +19,14 @@ func (service Service) UpdateCurrentUser() {
 	authorizationToken := service.tokenService.GetAuthorizationToken()
 	requestBody := strings.NewReader("")
 	mapper := NewResponseMapper()
-	_, err := network.Get(url, requestBody, mapper, authorizationToken)
+	response, err := network.Get(url, requestBody, mapper, authorizationToken)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	usr := response.(*domain.User)
+	persistence.SaveUser(usr)
 }
 
 func NewService(tokenService *token.Service) *Service {
