@@ -3,6 +3,7 @@ package network
 import (
 	"io"
 	"log"
+	"musicMaestro/internal/utils"
 	"net/http"
 )
 
@@ -35,7 +36,7 @@ func Post(url string, requestBody io.Reader, mapper ResponseMapper) (interface{}
 }
 
 func parseResponse(response *http.Response, mapper ResponseMapper) (interface{}, error) {
-	all := DecompressResponse(response.Body)
+	all := utils.Decompress(response.Body)
 	if response.StatusCode == 200 {
 		return mapper.MapSuccess(all), nil
 	} else {

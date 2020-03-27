@@ -1,4 +1,4 @@
-package network
+package utils
 
 import (
 	"compress/gzip"
@@ -7,15 +7,15 @@ import (
 	"log"
 )
 
-func DecompressResponse(response io.ReadCloser) []byte {
-	defer response.Close()
-	reader, err := gzip.NewReader(response)
+func Decompress(reader io.ReadCloser) []byte {
+	defer reader.Close()
+	gzipReader, err := gzip.NewReader(reader)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	responseBytes := getBytesFrom(reader)
+	responseBytes := getBytesFrom(gzipReader)
 	return responseBytes
 }
 

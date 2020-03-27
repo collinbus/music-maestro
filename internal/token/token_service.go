@@ -5,8 +5,8 @@ import (
 	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
 	"musicMaestro/internal/persistence"
+	"musicMaestro/internal/utils"
 	"strings"
-	"time"
 )
 
 const url = "https://accounts.spotify.com/api/token"
@@ -20,7 +20,7 @@ func (service *Service) GetAuthorizationToken() string {
 	if appData.RefreshToken == "" {
 		appData = requestApiToken(appData)
 		service.appDataService.SaveApplicationData(appData)
-	} else if isTokenExpired(appData.TokenExpiration) {
+	} else if utils.IsAfter(appData.TokenExpiration) {
 		appData = refreshApiToken(appData)
 		service.appDataService.SaveApplicationData(appData)
 	}
@@ -39,7 +39,7 @@ func requestApiToken(applicationData *domain.ApplicationData) *domain.Applicatio
 
 	applicationData.AccessCode = tokenResponse.AccessToken
 	applicationData.RefreshToken = tokenResponse.RefreshToken
-	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
+	applicationData.TokenExpiration = utils.CalculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
 }
 
@@ -54,16 +54,8 @@ func refreshApiToken(applicationData *domain.ApplicationData) *domain.Applicatio
 	tokenResponse := success.(*RefreshTokenResponseBody)
 
 	applicationData.AccessCode = tokenResponse.AccessToken
-	applicationData.TokenExpiration = network.CalculateExpirationDate(tokenResponse.ExpiresIn)
+	applicationData.TokenExpiration = utils.CalculateExpirationDate(tokenResponse.ExpiresIn)
 	return applicationData
-}
-
-func isTokenExpired(expiration string) bool {
-	parsedExpirationTime, err := time.Parse("2006-01-02T15:04:05-0700", expiration)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return parsedExpirationTime.Before(time.Now())
 }
 
 func createApiRequestBody(applicationData *domain.ApplicationData) *strings.Reader {
