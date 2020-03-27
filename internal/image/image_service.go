@@ -3,20 +3,14 @@ package image
 import (
 	"encoding/base64"
 	"musicMaestro/internal/network"
-	"musicMaestro/internal/user"
 )
 
-type Service struct {
-	userService *user.Service
-}
+type Service struct{}
 
-func (service *Service) DownloadUserImage() {
-	fetchedUser := service.userService.FetchUser()
-	imgBytes := network.DownloadImage(fetchedUser.Image.Url)
+func (Service) DownloadImage(url string) string {
+	imgBytes := network.DownloadImage(url)
 	base64String := convertToBase64(imgBytes)
-
-	fetchedUser.Image.Data = base64String
-	service.userService.UpdateUser(fetchedUser)
+	return base64String
 }
 
 func convertToBase64(data []byte) string {
@@ -24,6 +18,6 @@ func convertToBase64(data []byte) string {
 	return base64String
 }
 
-func NewService(userService *user.Service) *Service {
-	return &Service{userService: userService}
+func NewService() *Service {
+	return &Service{}
 }

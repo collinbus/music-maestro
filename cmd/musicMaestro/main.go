@@ -78,7 +78,12 @@ func updateMusicLibrary() {
 func downloadImages() {
 	tokenService := token.NewService()
 	userService := user.NewService(tokenService)
-	imageService := image.NewService(userService)
+	imageService := image.NewService()
 
-	imageService.DownloadUserImage()
+	fetchedUser := userService.FetchUser()
+
+	imgData := imageService.DownloadImage(fetchedUser.Image.Url)
+	fetchedUser.Image.Data = imgData
+
+	userService.UpdateUser(fetchedUser)
 }

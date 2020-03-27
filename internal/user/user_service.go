@@ -33,8 +33,8 @@ func (Service) FetchUser() *domain.User {
 	return persistence.GetUser()
 }
 
-func (Service) UpdateUser(user *domain.User) {
-	persistence.SaveUser(user)
+func (Service) UpdateUser(user *domain.User) bool {
+	return persistence.SaveUser(user)
 }
 
 func NewService(tokenService *token.Service) *Service {
