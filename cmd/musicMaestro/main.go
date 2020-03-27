@@ -67,7 +67,7 @@ func updateUser() {
 	tokenService := token.NewService()
 	userService := user.NewService(tokenService)
 
-	userService.UpdateCurrentUser()
+	userService.UpdateCurrentUserFromServer()
 }
 
 func updateMusicLibrary() {

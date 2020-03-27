@@ -38,8 +38,8 @@ func createUser(responseBody *GetUserInfoResponse) interface{} {
 	uri := responseBody.Uri
 
 	urls := domain.NewUrls(apiUrl, userUrl, uri)
-
-	return domain.NewUser(id, name, urls, imageUrl, followers)
+	image := domain.NewImage(imageUrl, "")
+	return domain.NewUser(id, name, urls, image, followers)
 }
 
 func NewResponseMapper() *ResponseMapper {

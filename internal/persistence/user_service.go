@@ -12,6 +12,7 @@ type UserBSON struct {
 	UserId      string
 	Name        string
 	ImageUrl    string
+	ImageData   string
 	Followers   int
 	InternalUrl string
 	ExternalUrl string
@@ -51,7 +52,8 @@ func GetUser() *domain.User {
 	}
 
 	urls := domain.NewUrls(userBSON.InternalUrl, userBSON.ExternalUrl, userBSON.Uri)
-	usr := domain.NewUser(userBSON.UserId, userBSON.Name, urls, userBSON.ImageUrl, userBSON.Followers)
+	img := domain.NewImage(userBSON.ImageUrl, userBSON.ImageData)
+	usr := domain.NewUser(userBSON.UserId, userBSON.Name, urls, img, userBSON.Followers)
 	return usr
 }
 
@@ -64,7 +66,8 @@ func createUserBSON(usr *domain.User) bson.D {
 		{"$set", bson.M{
 			"userId":      usr.Id,
 			"name":        usr.Name,
-			"imageUrl":    usr.ImageUrl,
+			"imageUrl":    usr.Image.Url,
+			"imageData":   usr.Image.Data,
 			"followers":   usr.Followers,
 			"internalUrl": usr.Urls.Internal,
 			"externalUrl": usr.Urls.External,
