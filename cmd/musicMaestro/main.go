@@ -32,15 +32,15 @@ func startMusicMaestro() {
 }
 
 func printMenu() {
-	println("==========================")
-	println(" Welcome to Music Maestro ")
-	println("==========================")
+	fmt.Println("==========================")
+	fmt.Println(" Welcome to Music Maestro ")
+	fmt.Println("==========================")
 
-	println("What would you like to do?")
-	println("1) Update user")
-	println("2) Update music library")
-	println("3) Download images")
-	println("0) Exit")
+	fmt.Println("What would you like to do?")
+	fmt.Println("1) Update user")
+	fmt.Println("2) Update music library")
+	fmt.Println("3) Download images")
+	fmt.Println("0) Exit")
 }
 
 func handleChoice(choice string) {
@@ -71,7 +71,7 @@ func updateUser() {
 }
 
 func updateMusicLibrary() {
-	println("Update Music Library")
+	fmt.Println("Update Music Library")
 	// TODO update music library
 }
 

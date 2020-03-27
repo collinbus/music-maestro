@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"musicMaestro/internal/domain"
 	"musicMaestro/internal/persistence"
 )
@@ -23,7 +24,13 @@ func ParseArguments(args []string) (map[string]string, error) {
 func HandleArguments(args map[string]string) {
 	applicationData := parseApplicationData(args)
 	appDataService := persistence.NewApplicationDataService()
-	appDataService.SaveApplicationData(applicationData)
+	success := appDataService.SaveApplicationData(applicationData)
+
+	if success {
+		fmt.Println("Application data successfully saved")
+	} else {
+		fmt.Println("Something went wrong while saving the application data")
+	}
 }
 
 func parseApplicationData(args map[string]string) *domain.ApplicationData {

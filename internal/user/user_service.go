@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"log"
 	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
@@ -27,6 +28,7 @@ func (service Service) UpdateCurrentUserFromServer() {
 
 	usr := response.(*domain.User)
 	persistence.SaveUser(usr)
+	fmt.Println("User successfully updated")
 }
 
 func (Service) FetchUser() *domain.User {
