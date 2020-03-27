@@ -47,19 +47,6 @@ func (*ApplicationDataService) RetrieveApplicationData() *domain.ApplicationData
 	return applicationData
 }
 
-func createAppDataBSON(applicationData *domain.ApplicationData) bson.D {
-	return bson.D{
-		{"$set", bson.M{
-			"applicationName": "musicMaestro",
-			"accessCode":      applicationData.AccessCode,
-			"clientId":        applicationData.ClientId,
-			"clientSecret":    applicationData.ClientSecret,
-			"refreshToken":    applicationData.RefreshToken,
-			"tokenExpiration": applicationData.TokenExpiration,
-		}},
-	}
-}
-
 func getApplicationDataCollection(client *mongo.Client) *mongo.Collection {
 	return GetCollection("applicationData", client)
 }
