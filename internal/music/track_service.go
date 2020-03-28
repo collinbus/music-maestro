@@ -1,10 +1,10 @@
 package music
 
 import (
-	"fmt"
 	"log"
 	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
+	"musicMaestro/internal/persistence"
 	"musicMaestro/internal/token"
 	"musicMaestro/internal/utils"
 	"strings"
@@ -31,7 +31,7 @@ func (service *TrackService) FetchUserTracks() {
 	userTracks = append(userTracks, trackResponse.Items...)
 
 	tracks := service.mapUserTracks(userTracks)
-	fmt.Println(len(tracks))
+	persistence.SaveTracks(tracks)
 }
 
 func (service *TrackService) mapUserTracks(userTracks []UserTrack) []domain.Track {
