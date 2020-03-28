@@ -1,7 +1,6 @@
 package music
 
 import (
-	"fmt"
 	"log"
 	"musicMaestro/internal/domain"
 	"musicMaestro/internal/network"
@@ -40,9 +39,9 @@ func (service *TrackService) FetchAllUserTracks() {
 	persistence.SaveTracks(tracks)
 }
 
-func (service *TrackService) GetAllUserTracks() {
+func (service *TrackService) GetAllUserTracks() []domain.Track {
 	tracks := persistence.RetrieveTracks()
-	fmt.Println(len(tracks))
+	return tracks
 }
 
 func (service *TrackService) getUserTracks(url string) *GetUserTracksResponse {

@@ -83,11 +83,10 @@ func updateMusicLibrary() {
 func downloadProfilePicture() {
 	tokenService := token.NewService()
 	userService := user.NewService(tokenService)
-	imageService := image.NewService()
 
 	fetchedUser := userService.FetchUser()
 
-	imgData := imageService.DownloadImage(fetchedUser.Image.Url)
+	imgData := image.DownloadImage(fetchedUser.Image.Url)
 	fetchedUser.Image.Data = imgData
 
 	userService.UpdateUser(fetchedUser)
@@ -98,5 +97,6 @@ func downloadAlbumArt() {
 
 	tokenService := token.NewService()
 	trackService := music.NewTrackService(tokenService)
-	trackService.GetAllUserTracks()
+	tracks := trackService.GetAllUserTracks()
+	music.UpdateAlbumArtOf(tracks)
 }

@@ -6,9 +6,7 @@ import (
 	"musicMaestro/internal/network"
 )
 
-type Service struct{}
-
-func (Service) DownloadImage(url string) string {
+func DownloadImage(url string) string {
 	imgBytes := network.DownloadImage(url)
 
 	if len(imgBytes) != 0 {
@@ -22,8 +20,4 @@ func (Service) DownloadImage(url string) string {
 func convertToBase64(data []byte) string {
 	base64String := base64.RawStdEncoding.EncodeToString(data)
 	return base64String
-}
-
-func NewService() *Service {
-	return &Service{}
 }

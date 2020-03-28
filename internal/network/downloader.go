@@ -10,7 +10,6 @@ func DownloadImage(url string) []byte {
 	response, err := http.Get(url)
 
 	if err != nil {
-		println("Unable to fetch image")
 		return []byte{}
 	}
 
