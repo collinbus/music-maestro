@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"musicMaestro/internal/image"
+	"musicMaestro/internal/music"
 	"musicMaestro/internal/token"
 	"musicMaestro/internal/user"
 	"os"
@@ -71,8 +72,9 @@ func updateUser() {
 }
 
 func updateMusicLibrary() {
-	fmt.Println("Update Music Library")
-	// TODO update music library
+	tokenService := token.NewService()
+	trackService := music.NewTrackService(tokenService)
+	trackService.FetchUserTracks()
 }
 
 func downloadImages() {
