@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -9,15 +10,14 @@ import (
 )
 
 func SaveUser(user *domain.User) bool {
-	ctx, _ := CreateContext()
-	client := EstablishConnection(ctx)
+	client := EstablishConnection(context.TODO())
 	collection := getUserCollection(client)
 
 	filter := bson.D{{"userId", user.Id}}
 	updateBSON := createUserBSON(user)
 
 	updateOptions := options.Update().SetUpsert(true)
-	_, err := collection.UpdateOne(ctx, filter, updateBSON, updateOptions)
+	_, err := collection.UpdateOne(context.TODO(), filter, updateBSON, updateOptions)
 
 	if err != nil {
 		println(fmt.Errorf(err.Error()))
@@ -40,8 +40,8 @@ func GetUser() *domain.User {
 		println(fmt.Errorf(err.Error()))
 	}
 
-	urls := domain.NewUrls(userBSON.InternalUrl, userBSON.ExternalUrl, userBSON.Uri)
-	img := domain.NewImage(userBSON.ImageUrl, userBSON.ImageData)
+	urls := userBSON.Urls
+	img := userBSON.Image
 	usr := domain.NewUser(userBSON.UserId, userBSON.Name, urls, img, userBSON.Followers)
 	return usr
 }

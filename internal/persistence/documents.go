@@ -6,14 +6,11 @@ import (
 )
 
 type UserBSON struct {
-	UserId      string
-	Name        string
-	ImageUrl    string
-	ImageData   string
-	Followers   int
-	InternalUrl string
-	ExternalUrl string
-	Uri         string
+	UserId    string        `bson:"userId"`
+	Name      string        `bson:"name"`
+	Image     *domain.Image `bson:"image"`
+	Followers int           `bson:"followers"`
+	Urls      *domain.Urls  `bson:"urls"`
 }
 
 func createEmptyUserBSON() *UserBSON {
@@ -22,15 +19,12 @@ func createEmptyUserBSON() *UserBSON {
 
 func createUserBSON(usr *domain.User) bson.D {
 	return bson.D{
-		{"$set", bson.M{
-			"userId":      usr.Id,
-			"name":        usr.Name,
-			"imageUrl":    usr.Image.Url,
-			"imageData":   usr.Image.Data,
-			"followers":   usr.Followers,
-			"internalUrl": usr.Urls.Internal,
-			"externalUrl": usr.Urls.External,
-			"uri":         usr.Urls.Uri,
+		{"$set", UserBSON{
+			UserId:    usr.Id,
+			Name:      usr.Name,
+			Image:     usr.Image,
+			Followers: usr.Followers,
+			Urls:      usr.Urls,
 		}},
 	}
 }
