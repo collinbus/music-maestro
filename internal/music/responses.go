@@ -23,12 +23,14 @@ type UserTrack struct {
 		Artists      []struct {
 			Id           string             `json:"id"`
 			Name         string             `json:"name"`
+			Href         string             `json:"href"`
 			Uri          string             `json:"uri"`
 			ExternalUrls ExternalSpotifyUrl `json:"external_urls"`
 		} `json:"artists"`
 		Album struct {
 			Id                   string             `json:"id"`
 			Name                 string             `json:"name"`
+			Href                 string             `json:"href"`
 			Uri                  string             `json:"uri"`
 			ExternalUrls         ExternalSpotifyUrl `json:"external_urls"`
 			ReleaseDate          string             `json:"release_date"`
