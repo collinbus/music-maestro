@@ -95,4 +95,8 @@ func downloadProfilePicture() {
 
 func downloadAlbumArt() {
 	fmt.Println("Download album art")
+
+	tokenService := token.NewService()
+	trackService := music.NewTrackService(tokenService)
+	trackService.GetAllUserTracks()
 }
