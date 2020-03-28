@@ -40,7 +40,8 @@ func printMenu() {
 	fmt.Println("What would you like to do?")
 	fmt.Println("1) Update user")
 	fmt.Println("2) Update music library")
-	fmt.Println("3) Download images")
+	fmt.Println("3) Download profile picture")
+	fmt.Println("4) Download album art")
 	fmt.Println("0) Exit")
 }
 
@@ -53,7 +54,9 @@ func handleChoice(choice string) {
 	case "2":
 		updateMusicLibrary()
 	case "3":
-		downloadImages()
+		downloadProfilePicture()
+	case "4":
+		downloadAlbumArt()
 	default:
 		fmt.Println("Invalid choice")
 	}
@@ -77,7 +80,7 @@ func updateMusicLibrary() {
 	trackService.FetchAllUserTracks()
 }
 
-func downloadImages() {
+func downloadProfilePicture() {
 	tokenService := token.NewService()
 	userService := user.NewService(tokenService)
 	imageService := image.NewService()
@@ -88,4 +91,8 @@ func downloadImages() {
 	fetchedUser.Image.Data = imgData
 
 	userService.UpdateUser(fetchedUser)
+}
+
+func downloadAlbumArt() {
+	fmt.Println("Download album art")
 }
