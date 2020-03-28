@@ -74,7 +74,7 @@ func updateUser() {
 func updateMusicLibrary() {
 	tokenService := token.NewService()
 	trackService := music.NewTrackService(tokenService)
-	trackService.FetchUserTracks()
+	trackService.FetchAllUserTracks()
 }
 
 func downloadImages() {

@@ -16,9 +16,30 @@ type TrackService struct {
 
 const url = "https://api.spotify.com/v1/me/tracks?offset=0&limit=50"
 
-func (service *TrackService) FetchUserTracks() {
-	var userTracks []UserTrack
+func (service *TrackService) FetchAllUserTracks() {
+	persistence.DeleteAllTracks()
 
+	var tracks []domain.Track
+	var tracksUrl = url
+	for {
+		var userTracks []UserTrack
+
+		trackResponse := service.GetUserTracks(tracksUrl)
+
+		userTracks = append(userTracks, trackResponse.Items...)
+
+		tracks = append(tracks, service.mapUserTracks(userTracks)...)
+
+		if trackResponse.Next == "" {
+			break
+		} else {
+			tracksUrl = trackResponse.Next
+		}
+	}
+	persistence.SaveTracks(tracks)
+}
+
+func (service *TrackService) GetUserTracks(url string) *GetUserTracksResponse {
 	mapper := NewTrackResponseMapper()
 	response, err := network.Get(url, strings.NewReader(""), mapper, service.tokenService.GetAuthorizationToken())
 
@@ -27,11 +48,7 @@ func (service *TrackService) FetchUserTracks() {
 	}
 
 	trackResponse := response.(*GetUserTracksResponse)
-
-	userTracks = append(userTracks, trackResponse.Items...)
-
-	tracks := service.mapUserTracks(userTracks)
-	persistence.SaveTracks(tracks)
+	return trackResponse
 }
 
 func (service *TrackService) mapUserTracks(userTracks []UserTrack) []domain.Track {
