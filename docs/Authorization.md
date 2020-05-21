@@ -10,7 +10,7 @@ Inside you'll need a database `musicMaestro` with collection `applicationData`. 
 If your application wants to use the Spotify api you can follow the [Spotify Authorization Code Flow](https://developer.spotify.com/documentation/general/guides/authorization-guide/#authorization-code-flow)<br>
 The very first time, you'll need to register your app in order to request an access token. Once that's successful, copy the code
 from the redirect url and initialize it in the application with following command:
-> musicMaestro -code CODE
+> musicMaestro -accessCode CODE -clientId CLIENT_ID -clientSecret CLIENT_SECRET
 
 
 #### Requesting an access token
